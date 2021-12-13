@@ -1,8 +1,12 @@
 const qwerty = document.getElementById('qwerty');
 const phrase = document.getElementById('phrase');
-const tries = document.getElementsByClassName('tries');
+const hearts = document.querySelectorAll('.tries img');
+
 let missed = 0;
+
 const startGame = document.querySelector('.btn_reset');
+const overlay = document.getElementById('overlay');
+const title = document.querySelector('.title');
 
 startGame.addEventListener('click', (e) => {
   overlay.style.display = 'none';
@@ -46,8 +50,8 @@ function addPhraseToDisplay(arr) {
 addPhraseToDisplay(phrases);
 
 function checkLetter(buttonClicked) {
-  const letters = document.querySelectorAll('.letter');
   let matchedLetter = null;
+  const letters = document.querySelectorAll('.letter');
 
   for ( let i = 0; i < letters.length; i++ ) {
     if ( buttonClicked === letters[i].textContent ) {
@@ -66,13 +70,68 @@ qwerty.addEventListener('click', (e) => {
     const chosenLetter = checkLetter(buttonClicked);
   
     if ( chosenLetter === null ) {
-      const hearts = document.querySelectorAll('.tries img');
-      hearts.setAttribute = ('src', 'images/lostHeart.png');
+      hearts[missed].src = 'images/lostHeart.png';
+      hearts[missed].className = 'lost';
       missed++;
+      checkLoss();
+    } else {
+      checkWin();
     }
   }
 });
 
 function checkWin() {
+  let shown = document.getElementsByClassName('show');
+  let letters = document.getElementsByClassName('letter');
 
+  if ( shown.length === letters.length ) {
+    overlay.style.display = 'flex';
+    overlay.className = 'win';
+    phrase.style.display = 'none';
+    title.textContent = "Congrats, you did it!";
+
+    startGame.addEventListener('click', () => {
+      resetGame();
+    });
+  } 
+}
+
+function checkLoss() {
+  if ( missed === 5 ) {
+    overlay.style.display = 'flex';
+    overlay.className = 'lose';
+    phrase.style.display = 'none';
+    title.textContent = "You lost, better luck next time!";
+
+    startGame.addEventListener('click', () => {
+      resetGame();
+    });
+  }
+}
+
+function resetGame() {
+  
+  function resetHearts() {
+    for ( let i = 0; i < hearts.length; i++) {
+      hearts[i].src = 'images/liveHeart.png';
+      hearts[i].className = 'tries';
+    }
+  }
+
+  function resetPhrase() {
+    phrase.firstElementChild.innerHTML = '';
+  }
+
+  function resetKeyboard() {
+    let buttons = document.querySelectorAll('button');
+    for ( let i = 0; i < buttons.length; i++ ) {
+      buttons[i].className = '';
+    }
+  }
+
+  resetHearts();
+  resetPhrase();
+  resetKeyboard();
+  addPhraseToDisplay(phrases);
+  overlay.style.display = 'none';
 }
