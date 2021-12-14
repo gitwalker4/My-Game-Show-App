@@ -10,11 +10,7 @@ const overlay = document.getElementById('overlay');
 const title = document.querySelector('.title');
 
 startGame.addEventListener('click', (e) => {
-  if ( startGame.textContent === 'REPLAY') {
-    resetGame();
-  } else {
-    overlay.style.display = 'none';
-  }
+  resetGame();
 });
 
 let phrases = [
@@ -33,7 +29,6 @@ function getRandomPhraseArray(arr) {
   return phraseSplit;
 }
 
-const phraseArray = getRandomPhraseArray(phrases);
 
 function addPhraseToDisplay(arr) {
   for ( let i = 0; i < arr.length; i++ ) {
@@ -48,8 +43,6 @@ function addPhraseToDisplay(arr) {
     ul.append(listItem);
   }
 }
-
-addPhraseToDisplay(phraseArray);
 
 function checkLetter( clickedButton ) {
   const checkLetter = document.querySelectorAll('li');
@@ -82,7 +75,7 @@ function checkWin() {
   const classShow = document.getElementsByClassName('show');
   if ( classLetter.length === classShow.length ) {
     overlay.className = 'win';
-    title.textContent = "Great Job, you win!"
+    title.textContent = "Great Job, you won!"
     overlay.style.display = 'flex';
     startGame.textContent = 'REPLAY';
   } else if ( missed >= 5 ) {
@@ -94,25 +87,31 @@ function checkWin() {
 }
 
 function resetGame() {
- let missed = 0;
+  missed = 0;
   
   function resetHearts() {
     for ( let i = 0; i < hearts.length; i++ ) {
-      hearts[missed].src = 'images/liveHeart.png'; 
-      missed = 0;
+      hearts[i].src = 'images/liveHeart.png'; 
     }
   }
 
   function resetButtons() {
     for ( let i = 0; i < buttons.length; i++ ) {
-      buttons.className = '';
+      buttons[i].classList.remove('chosen');
+      buttons[i].disabled = false;
     }
   }
 
-  getRandomPhraseArray(phrases);
-  addPhraseToDisplay(phraseArray);
+  function resetPhrase() {
+    let ul = document.querySelector('#phrase ul');
+    ul.innerHTML = null;
+  }
+
   resetHearts();
   resetButtons();
+  resetPhrase();
+  const phraseArray = getRandomPhraseArray(phrases);
+  addPhraseToDisplay(phraseArray);
   overlay.style.display = 'none';
 
 }
