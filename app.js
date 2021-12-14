@@ -1,6 +1,7 @@
 const qwerty = document.getElementById('qwerty');
 const phrase = document.getElementById('phrase');
 const hearts = document.querySelectorAll('.tries img');
+const buttons = document.getElementsByTagName('button');
 
 let missed = 0;
 
@@ -13,13 +14,13 @@ startGame.addEventListener('click', (e) => {
 });
 
 let phrases = [
-  'the beach was crowded with snow leopards',
-  'dan ate the clouds like cotton candy',
-  'tuesdays are free if you bring a gnome costume',
-  'that is an appealing treasure map that I cannot read',
-  'i trust everything that is written in purple ink',
-  'he created a pig burger out of beef',
-  'having no hair made him look even hairier'
+  'who let the dogs out',
+  'wake me up before you go go',
+  'smooth like butter',
+  'permission to dance',
+  'girl of my dreams',
+  'the cold wind blows',
+  'i wanna go to the moon'
 ]
 
 function getRandomPhraseArray(arr) {
@@ -31,18 +32,80 @@ function getRandomPhraseArray(arr) {
 const phraseArray = getRandomPhraseArray(phrases);
 
 function addPhraseToDisplay(arr) {
-  const ul = document.querySelector('#phrase ul');
-  const listItem = document.createElement('li');
-
-  for ( let i = 0; i < phraseArray.length; i++ ) {
-    ul.append(listItem); 
-
-    if ( listItem !== ' ' ) {
+  for ( let i = 0; i < arr.length; i++ ) {
+    const ul = document.querySelector('#phrase ul');
+    const listItem = document.createElement('li');
+    listItem.textContent = arr[i];
+    if ( listItem.textContent !== ' ' ) {
       listItem.className = 'letter';
     } else {
-      listItem.className = '';
+      listItem.className = 'space';
     }
+    ul.append(listItem);
   }
 }
 
 addPhraseToDisplay(phraseArray);
+
+function checkLetter( clickedButton ) {
+  const checkLetter = document.querySelectorAll('li');
+  let match = null;
+  for ( let i = 0; i < checkLetter.length; i++ ) {
+    if ( clickedButton === checkLetter[i].textContent ) {
+      checkLetter[i].className = 'letter show';
+      match += checkLetter[i].textContent;
+    }
+  }
+  return match
+}
+
+qwerty.addEventListener('click', (e) => {
+  let button = e.target;
+  if (button.tagName === 'BUTTON' && button.className !== 'chosen') {
+    button.className += 'chosen';
+    button.disabled = true;
+    let chosenLetter = checkLetter(button.textContent);
+    if ( chosenLetter === null ) {
+      hearts[missed].src = 'images/lostHeart.png';
+      missed++;
+    }
+  }
+  checkWin();
+});
+
+function checkWin() {
+  const classLetter = document.getElementsByClassName('letter');
+  const classShow = document.getElementsByClassName('show');
+  if ( classLetter.length === classShow.length ) {
+    overlay.className = 'win';
+    title.textContent = "Great Job, you win!"
+    overlay.style.display = 'flex';
+    startGame.textContent = 'Replay'
+  } else if ( missed >= 5 ) {
+    overlay.className = 'lose';
+    title.textContent = "Hey no worries, try again."
+    overlay.style.display = 'flex';
+    startGame.textContent = 'Replay'
+  }
+}
+
+function resetGame() {
+ let missed = 0;
+  
+  function resetHearts() {
+    for ( let i = 0; i < hearts.length; i++ ) {
+      hearts[missed].src = 'images/liveHeart.png';
+    }
+  }
+
+  function resetButtons() {
+    for ( let i = 0; i < buttons.length; i++ ) {
+      buttons.className = ''
+    }
+  }
+
+  addPhraseToDisplay(phrases);
+  resetHearts();
+  resetButtons();
+
+}
