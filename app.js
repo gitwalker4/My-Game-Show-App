@@ -10,7 +10,11 @@ const overlay = document.getElementById('overlay');
 const title = document.querySelector('.title');
 
 startGame.addEventListener('click', (e) => {
-  overlay.style.display = 'none';
+  if ( startGame.textContent === 'REPLAY') {
+    resetGame();
+  } else {
+    overlay.style.display = 'none';
+  }
 });
 
 let phrases = [
@@ -80,12 +84,12 @@ function checkWin() {
     overlay.className = 'win';
     title.textContent = "Great Job, you win!"
     overlay.style.display = 'flex';
-    startGame.textContent = 'Replay'
+    startGame.textContent = 'REPLAY';
   } else if ( missed >= 5 ) {
     overlay.className = 'lose';
     title.textContent = "Hey no worries, try again."
     overlay.style.display = 'flex';
-    startGame.textContent = 'Replay'
+    startGame.textContent = 'REPLAY';
   }
 }
 
@@ -94,18 +98,21 @@ function resetGame() {
   
   function resetHearts() {
     for ( let i = 0; i < hearts.length; i++ ) {
-      hearts[missed].src = 'images/liveHeart.png';
+      hearts[missed].src = 'images/liveHeart.png'; 
+      missed = 0;
     }
   }
 
   function resetButtons() {
     for ( let i = 0; i < buttons.length; i++ ) {
-      buttons.className = ''
+      buttons.className = '';
     }
   }
 
-  addPhraseToDisplay(phrases);
+  getRandomPhraseArray(phrases);
+  addPhraseToDisplay(phraseArray);
   resetHearts();
   resetButtons();
+  overlay.style.display = 'none';
 
 }
